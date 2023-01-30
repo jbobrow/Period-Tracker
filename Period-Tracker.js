@@ -24,6 +24,7 @@ else {
 }
 
 let widget = createWidget(days);
+widget.url = "scriptable:///run/Period%20Logger";
 Script.setWidget(widget);
 Script.complete();
   
