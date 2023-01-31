@@ -33,7 +33,6 @@ canvas.respectScreenScale = true;
 makeCircle(180);
 
 let widget = createWidget(days);
-widget.backgroundImage = canvas.getImage();
 widget.url = "scriptable:///run/Period%20Logger";
 Script.setWidget(widget);
 Script.complete();
@@ -52,6 +51,7 @@ function createWidget(days) {
   widget.backgroundColor = new Color('#222222');
   
   if( days != 365 ) {
+    widget.backgroundImage = canvas.getImage(); // add circle if initialized
 
     widget.addSpacer();
     const stack = widget.addStack();
@@ -81,12 +81,12 @@ function createWidget(days) {
   else {
     // the period log isn't setup
     let setupTitle = widget.addText("⚠️ Read Me")
-    setupTitle.font = new Font("Helvetica-Bold", 22);
+    setupTitle.font = new Font("Helvetica-Bold", 20);
     setupTitle.textColor = new Color('#FFFFFF');
     setupTitle.leftAlignText();
     setupTitle.lineLimit = 0;
         
-    let setupPrompt = widget.addText("Please run the Period Logger script first.")
+    let setupPrompt = widget.addText("Click here to log a period.")
     setupPrompt.font = new Font("Helvetica-Bold", 14);
     setupPrompt.textColor = new Color('#666A6A');
     setupPrompt.leftAlignText();
