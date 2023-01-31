@@ -16,7 +16,7 @@ if(fileManager.fileExists(file)) {
   var averagePeriodLength = 28; // TODO: calculate this based on historical data... (not that critical)
   var now = new Date().getTime();
   var distance = prevPeriodDate - now;
-  var distanceToNext = distance + 28 * (1000 * 60 * 60 * 24);
+  var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
   days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24));
 }
 else {
