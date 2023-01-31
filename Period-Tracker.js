@@ -13,7 +13,7 @@ if(fileManager.fileExists(file)) {
   console.log("File found!");
 
   var prevPeriodDate = getLastPeriodDate(file);
-  var averagePeriodLength = 28; // TODO: calculate this based on historical data... (not that critical)
+  var averagePeriodLength = getAveragePeriodLength(file); // based on historical data...
   var now = new Date().getTime();
   var distance = prevPeriodDate - now;
   var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
@@ -78,6 +78,7 @@ function createWidget(days) {
   return widget
 }
 
+
 /*
  * Get the last recorded Period date from the file
  */
@@ -85,11 +86,39 @@ function getLastPeriodDate(file) {
   
   var data = fileManager.readString(file);
   var dates = data.split(',');
-  console.log(dates.length);
+  //console.log(dates.length);
   
   var date = new Date(dates[dates.length-1]).getTime();
   
   return date;
+}
+
+
+/*
+ *
+ */
+function getAveragePeriodLength(file) {
+  var avg = 28; // default to 28
+
+  var data = fileManager.readString(file);
+  var dates = data.split(',');
+    
+  if( dates.length > 2 ) {
+    var total = 0;
+    var num = dates.length-1;
+
+    for(var i=0; i<dates.length-1; i++) {
+      var beginDate = new Date(dates[i]).getTime();
+      var endDate = new Date(dates[i+1]).getTime();
+      var daysBetween = Math.floor((endDate-beginDate) / (1000 * 60 * 60 * 24));      
+      total += daysBetween;
+    }
+
+    avg = total / num;
+    console.log("Calculated average period length: " + avg + " days");
+  }
+  
+  return avg;
 }
 
 
