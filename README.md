@@ -1,4 +1,4 @@
-# Period-Tracker
+# Period Tracker
 A simple Scriptable Widget for the information you need at a glance.
 ![Period Tracker Progression](https://user-images.githubusercontent.com/772799/215680314-e57cda7f-de7e-473c-9c16-0e4f138cd55e.png)
 
