@@ -18,12 +18,22 @@ if(fileManager.fileExists(file)) {
   var distance = prevPeriodDate - now;
   var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
   days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24));
+  days = days > 0 ? days : 0;
 }
 else {
   console.log("No File found :(");
 }
 
+// DRAW THE BACKGROUND CIRCLE
+const canvSize = 282;
+const canvas = new DrawContext();
+canvas.opaque = false;
+canvas.size = new Size(canvSize, canvSize);
+canvas.respectScreenScale = true;
+makeCircle(180);
+
 let widget = createWidget(days);
+widget.backgroundImage = canvas.getImage();
 widget.url = "scriptable:///run/Period%20Logger";
 Script.setWidget(widget);
 Script.complete();
@@ -39,36 +49,46 @@ function createWidget(days) {
   let widget = new ListWidget();
 
   // draw background color
-  widget.backgroundColor = backgroundColorByDays(days);
+  widget.backgroundColor = new Color('#222222');
   
   if( days != 365 ) {
-    let title = widget.addText("Period expected in")
-    title.font = Font.semiboldSystemFont(14);
-    title.textColor = textColorByDays(days);
-    title.leftAlignText();
-    title.lineLimit = 2;
+
+    widget.addSpacer();
+    const stack = widget.addStack();
+    stack.setPadding(0, 0, 0, 0);
+    stack.layoutVertically();
     
-    let countText = widget.addText(days.toString());
-    countText.font = Font.semiboldSystemFont(48);
-    countText.textColor = textColorByDays(days);
-    countText.leftAlignText();  
+    let numStack = stack.addStack();
+    numStack.setPadding(0,0,-12,0);
+    numStack.layoutHorizontally();
+    numStack.addSpacer();
+    let countText = numStack.addText(days.toString());
+    countText.font = new Font("Helvetica-Bold", 60);
+    countText.textColor = new Color('#222222');
+    numStack.addSpacer();
   
-    let daysText = widget.addText("days");
-    daysText.font = Font.semiboldSystemFont(14);
-    daysText.textColor = textColorByDays(days);
-    daysText.leftAlignText();  
+    let dayStack = stack.addStack();
+    dayStack.setPadding(0,0,0,0);
+    dayStack.layoutHorizontally();
+    dayStack.addSpacer();
+    let daysText = days===1 ? dayStack.addText("day") : dayStack.addText("days");
+    daysText.font = new Font("Helvetica-Bold", 18);
+    daysText.textColor = new Color('#222222');
+    dayStack.addSpacer();
+    
+    widget.addSpacer();
   }
   else {
     // the period log isn't setup
     let setupTitle = widget.addText("⚠️ Read Me")
-    setupTitle.font = Font.semiboldSystemFont(22);
+    setupTitle.font = new Font("Helvetica-Bold", 22);
     setupTitle.textColor = new Color('#FFFFFF');
     setupTitle.leftAlignText();
     setupTitle.lineLimit = 0;
         
     let setupPrompt = widget.addText("Please run the Period Logger script first.")
-    setupPrompt.font = Font.semiboldSystemFont(14);
-    setupPrompt.textColor = textColorByDays(days);
+    setupPrompt.font = new Font("Helvetica-Bold", 14);
+    setupPrompt.textColor = new Color('#666A6A');
     setupPrompt.leftAlignText();
     setupPrompt.lineLimit = 0;
   
@@ -128,29 +148,20 @@ function getAveragePeriodLength(file) {
 function backgroundColorByDays(days) {
   
   if(days > 7) {
-    return new Color("#222A2A"); // Dark Grey
+    return new Color("#4A4B4C"); // Dark Grey
   }
   else if(days > 3) {
-    return new Color("#662222"); // Dark Red
+    return new Color("#985353"); // Middle
   }
   else {
-    return new Color("#AA2222"); // Lighter Red    
+    return new Color("#FF644B"); // Lighter Red    
   }
 }
 
-
 /*
- * Get a text color based on the number of days
- */  
-function textColorByDays(days) {
-  
-  if(days > 7) {
-    return new Color("#666A6A"); // Dark Grey
-  }
-  else if(days > 3) {
-    return new Color("#CCAAAA"); //
-  }
-  else {
-    return new Color("#EECCCC"); //
-  }
+ * Adds an circle to the canvas
+ */
+function makeCircle(size) {
+  canvas.setFillColor(backgroundColorByDays(days));
+  canvas.fillEllipse(new Rect((canvSize-size)/2,(canvSize-size)/2,size,size))
 }
