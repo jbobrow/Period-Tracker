@@ -9,3 +9,6 @@ A simple Scriptable Widget for the information you need at a glance.
 4. Add a new Script called "Period Logger"
 5. Copy and Paste the contents of [Period-Logger.js](https://raw.githubusercontent.com/jbobrow/Period-Tracker/main/Period-Logger.js)
 6. Add a Scriptable Widget to your homescreen (select "Period Tracker")
+
+## Screenshots
+![iphonex-mockup-period-tracker-combined](https://user-images.githubusercontent.com/772799/215684256-3559c2de-d542-43fa-8424-d584474309e8.png)
