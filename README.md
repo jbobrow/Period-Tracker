@@ -12,3 +12,6 @@ A simple Scriptable Widget for the information you need at a glance.
 
 ## Screenshots
 ![iphonex-mockup-period-tracker-combined](https://user-images.githubusercontent.com/772799/215684256-3559c2de-d542-43fa-8424-d584474309e8.png)
+
+#### PRO-TIP:
+_The dates are stored in a CSV File `iCloud Drive/Scriptable/periodTracker.csv` If you have historical data that you would like to migrate, just edit the file by adding the dates separated by commas, and this will give you a headstart on the average length._
