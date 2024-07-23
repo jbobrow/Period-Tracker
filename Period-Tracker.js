@@ -1,6 +1,7 @@
 /* Period Tracker */
 // Step 1: retrieve last period date
 // Step 2: look 28 days ahead and show how many days away that is
+// Bonus: Added Fertility indicator with teal during the most fertile window
 
 let fileManager = FileManager.iCloud();
 let filePath = fileManager.documentsDirectory();
@@ -17,7 +18,7 @@ if(fileManager.fileExists(file)) {
   var now = new Date().getTime();
   var distance = prevPeriodDate - now;
   var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
-  days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24));
+  days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24))+1;
   days = days > 0 ? days : 0;
 }
 else {
@@ -126,15 +127,17 @@ function getAveragePeriodLength(file) {
   if( dates.length > 2 ) {
     var total = 0;
     var num = dates.length-1;
+    var first = num >= 6 ? num - 6 : 0;
+    
 
-    for(var i=0; i<dates.length-1; i++) {
+    for(var i=first; i<num; i++) {
       var beginDate = new Date(dates[i]).getTime();
       var endDate = new Date(dates[i+1]).getTime();
       var daysBetween = Math.floor((endDate-beginDate) / (1000 * 60 * 60 * 24));      
       total += daysBetween;
     }
 
-    avg = total / num;
+    avg = total / (num - first);
     console.log("Calculated average period length: " + avg + " days");
   }
   
@@ -147,11 +150,23 @@ function getAveragePeriodLength(file) {
  */  
 function backgroundColorByDays(days) {
   
-  if(days > 7) {
+  // Fertile Window
+  if(days > 18) {
+    return new Color("#4A4B4C"); // Dark Grey
+  }
+  else if(days > 15) {
+    return new Color("#468585"); // Dark Teal
+  }
+  else if(days > 13) {
+    return new Color("#50B498"); // Teal
+  }  
+  
+  // Period
+  else if(days > 7) {
     return new Color("#4A4B4C"); // Dark Grey
   }
   else if(days > 3) {
-    return new Color("#985353"); // Middle
+    return new Color("#985353"); // Middle Red
   }
   else {
     return new Color("#FF644B"); // Lighter Red    
