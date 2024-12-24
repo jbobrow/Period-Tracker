@@ -130,11 +130,23 @@ function getAveragePeriodLength(file) {
     var first = num >= 6 ? num - 6 : 0;
     
 
-    for(var i=first; i<num; i++) {
-      var beginDate = new Date(dates[i]).getTime();
-      var endDate = new Date(dates[i+1]).getTime();
-      var daysBetween = Math.floor((endDate-beginDate) / (1000 * 60 * 60 * 24));      
-      total += daysBetween;
+    for(var i=num; i>first; i--) {
+      var beginDate = new Date(dates[i-1]).getTime();
+      var endDate = new Date(dates[i]).getTime();
+      var daysBetween = Math.floor((endDate-beginDate) / (1000 * 60 * 60 * 24));
+      
+      if( daysBetween >= 40 ) { // invalid: don't add this one to the total 
+      
+        if(first > 0) {
+          first--;  // let's get another date
+        }
+        num--;    // let's also shift our total
+        
+        console.log("gap detected with " + daysBetween + " days"); 
+      }
+      else {
+        total += daysBetween; // valid: add this one to the total
+      }
     }
 
     avg = total / (num - first);
@@ -178,5 +190,5 @@ function backgroundColorByDays(days) {
  */
 function makeCircle(size) {
   canvas.setFillColor(backgroundColorByDays(days));
-  canvas.fillEllipse(new Rect((canvSize-size)/2,(canvSize-size)/2,size,size))
+  canvas.fillEllipse(new Rect((canvSize-size)/2,(canvSize-size)/2,size,size));
 }
