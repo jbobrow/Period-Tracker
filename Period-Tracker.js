@@ -14,12 +14,20 @@ if(fileManager.fileExists(file)) {
   console.log("File found!");
 
   var prevPeriodDate = getLastPeriodDate(file);
-  var averagePeriodLength = getAveragePeriodLength(file); // based on historical data...
-  var now = new Date().getTime();
-  var distance = prevPeriodDate - now;
-  var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
-  days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24))+1;
-  days = days > 0 ? days : 0;
+  
+  // Only calculate if we have a valid previous period date
+  if (prevPeriodDate !== null) {
+    var averagePeriodLength = getAveragePeriodLength(file);
+    var now = new Date().getTime();
+    var distance = prevPeriodDate - now;
+    var distanceToNext = distance + averagePeriodLength * (1000 * 60 * 60 * 24);
+    days = Math.floor(distanceToNext / (1000 * 60 * 60 * 24))+1;
+    days = days > 0 ? days : 0;
+  } else {
+    // No valid period date found, keep default value
+    console.log("No valid period date found in file");
+    days = 365; // This will trigger the setup message
+  }
 }
 else {
   console.log("No File found :(");
@@ -106,10 +114,20 @@ function createWidget(days) {
 function getLastPeriodDate(file) {
   
   var data = fileManager.readString(file);
-  var dates = data.split(',');
-  //console.log(dates.length);
   
-  var date = new Date(dates[dates.length-1]).getTime();
+  // Handle case where file is empty or returns null
+  if (!data || data.trim() === "") {
+    return null;
+  }
+  
+  var dates = data.split(',');
+  
+  // Check if we have valid dates
+  if (dates.length === 0 || dates[dates.length-1].trim() === "") {
+    return null;
+  }
+  
+  var date = new Date(dates[dates.length-1].trim()).getTime();
   
   return date;
 }
@@ -122,6 +140,12 @@ function getAveragePeriodLength(file) {
   var avg = 28; // default to 28
 
   var data = fileManager.readString(file);
+  
+  // Handle case where file is empty or returns null
+  if (!data || data.trim() === "") {
+    return avg;
+  }
+  
   var dates = data.split(',');
     
   if( dates.length > 2 ) {

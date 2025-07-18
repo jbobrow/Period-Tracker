@@ -15,14 +15,24 @@ if(fileManager.fileExists(file)) {
   
   // determine days since last period
   var prevPeriodDate = getLastPeriodDate(file);
-  var now = new Date().getTime();
-  var diff = prevPeriodDate - now;
-  var daysSince = Math.abs(Math.floor(diff / (1000 * 60 * 60 * 24)));
+  
+  // Handle case where no previous period date exists
+  if (prevPeriodDate === null) {
+    alert.title = "Period Logger";
+    alert.message = "No previous period logged. Do you want to log a period today?";
+    alert.addAction("Log period");
+    alert.addCancelAction("Cancel");
+  } else {
+    var now = new Date().getTime();
+    var diff = prevPeriodDate - now;
+    var daysSince = Math.abs(Math.floor(diff / (1000 * 60 * 60 * 24)));
 
-  alert.title = "Period Logger";
-  alert.message = "It's been " + daysSince + " day(s) since the last period logged. Do you want to log a period today?";
-  alert.addAction("Log period");
-  alert.addCancelAction("Cancel");
+    alert.title = "Period Logger";
+    alert.message = "It's been " + daysSince + " day(s) since the last period logged. Do you want to log a period today?";
+    alert.addAction("Log period");
+    alert.addCancelAction("Cancel");
+  }
+  
   var result = await alert.present();
   
   if( result == 0 ) {
@@ -143,10 +153,21 @@ Script.complete();
 function getLastPeriodDate(file) {
   
   var data = fileManager.readString(file);
+  
+  // Handle case where file is empty or returns null
+  if (!data || data.trim() === "") {
+    return null; // or return a default date
+  }
+  
   var dates = data.split(',');
   console.log(dates.length);
   
-  var date = new Date(dates[dates.length-1]).getTime();
+  // Also check if we have valid dates
+  if (dates.length === 0 || dates[dates.length-1].trim() === "") {
+    return null; // or return a default date
+  }
+  
+  var date = new Date(dates[dates.length-1].trim()).getTime();
   
   return date;
 }
